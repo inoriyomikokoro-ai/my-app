@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音靈オラクル - 言の葉と景色のオラクル</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Shippori Mincho & Zen Maru Gothic -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori-Mincho:wght@400;600;800&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      background: linear-gradient(135deg, #fdfbf7 0%, #f4efe6 100%);
+      color: #33322e;
+      min-height: 100vh;
+    }
+    .font-mincho {
+      font-family: 'Shippori Mincho', serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(230, 220, 205, 0.7);
+      box-shadow: 0 10px 30px -10px rgba(110, 95, 80, 0.08);
+    }
+    .card-hover {
+      transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 15px 35px -5px rgba(80, 60, 40, 0.15);
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f4efe6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c5b8a5;
+      border-radius: 3px;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen relative overflow-x-hidden">
+
+  <div class="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-emerald-100/40 blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-amber-100/40 blur-3xl pointer-events-none -z-10"></div>
+
+  <header class="w-full py-5 px-6 border-b border-stone-200/60 bg-white/50 backdrop-filter blur-md sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="showHome()">
+        <span class="text-2xl">🌿</span>
+        <div class="flex flex-col">
+          <span class="text-xs text-emerald-800 font-bold tracking-widest">音靈オラクル</span>
+          <h1 class="font-mincho text-xl sm:text-2xl font-bold tracking-wider text-stone-800 leading-none">音と言の葉から生まれる心の風景</h1>
+        </div>
+      </div>
+      <!-- Navigation Controls -->
+      <nav class="flex items-center gap-2 sm:gap-3 text-sm">
+        <button onclick="showHome()" class="px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 transition flex items-center gap-1.5 shadow-sm">
+          <span>🏠</span> ホーム
+        </button>
+        <button id="nav-toggle-btn" onclick="toggleMode()" class="px-3 py-1.5 rounded-full bg-emerald-700 text-white hover:bg-emerald-800 transition flex items-center gap-1.5 shadow-md">
+          <span id="nav-toggle-icon">🔀</span> <span id="nav-toggle-text">切り替える</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8 sm:py-12 flex flex-col justify-center">
+
+    <!-- HOME VIEW -->
+    <section id="view-home" class="animate-fade-in flex flex-col items-center text-center my-auto">
+      <div class="inline-block p-3 rounded-full bg-emerald-50 mb-3 border border-emerald-100 text-emerald-800 text-3xl">
+        🍃
+      </div>
+      <p class="text-xs text-emerald-800 font-bold tracking-widest uppercase mb-1">音靈オラクル</p>
+      <h2 class="font-mincho text-2xl sm:text-4xl font-bold text-stone-800 mb-4 leading-relaxed">
+        音と言の葉から生まれる<br class="sm:hidden">心の風景
+      </h2>
+      <p class="text-stone-600 max-w-xl mb-10 text-base sm:text-lg leading-relaxed">
+        今日あなたの心が呼び寄せる「景色」や「音靈」には、小さなメッセージが込められています。直感でひとつ選んでみましょう。
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+        <button onclick="startMode('picture')" class="glass-card p-8 rounded-2xl text-left card-hover border-2 border-transparent hover:border-emerald-300 flex flex-col justify-between group">
+          <div>
+            <div class="text-4xl mb-4 group-hover:scale-110 transition duration-300">🖼️</div>
+            <h3 class="font-mincho text-xl font-bold text-stone-800 mb-2">① 絵から選ぶ</h3>
+            <p class="text-stone-600 text-sm leading-relaxed">
+              46枚の景色から、直感で惹かれる1枚を選びます。その絵が持つ音とメッセージを開きましょう。
+            </p>
+          </div>
+          <div class="mt-6 flex items-center text-emerald-700 font-bold text-sm">
+            景色を探す <span class="ml-1 group-hover:translate-x-1 transition">→</span>
+          </div>
+        </button>
+
+        <button onclick="startMode('sound')" class="glass-card p-8 rounded-2xl text-left card-hover border-2 border-transparent hover:border-emerald-300 flex flex-col justify-between group">
+          <div>
+            <div class="text-4xl mb-4 group-hover:scale-110 transition duration-300">🎵</div>
+            <h3 class="font-mincho text-xl font-bold text-stone-800 mb-2">② 音から選ぶ</h3>
+            <p class="text-stone-600 text-sm leading-relaxed">
+              「あ」から「ん」の五十音から、今気になる音を選びます。音がひらく美しい世界を感じてみましょう。
+            </p>
+          </div>
+          <div class="mt-6 flex items-center text-emerald-700 font-bold text-sm">
+            音を選ぶ <span class="ml-1 group-hover:translate-x-1 transition">→</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- PICTURE MODE -->
+    <section id="view-picture" class="hidden animate-fade-in">
+      <div class="text-center mb-8 max-w-2xl mx-auto">
+        <h2 class="font-mincho text-2xl sm:text-3xl font-bold text-stone-800 mb-3 flex items-center justify-center gap-2">
+          <span>🌿</span> 気になる景色を選んでください
+        </h2>
+        <p class="text-stone-600 text-sm sm:text-base leading-relaxed bg-amber-50/60 p-4 rounded-xl border border-amber-100/80">
+          この景色のイメージに、心が惹かれているのかもしれません。<br class="hidden sm:inline">
+          ゆっくり眺めて、感じてみましょう。
+        </p>
+        <div class="mt-4 flex justify-center gap-3">
+          <button onclick="shuffleAndRenderPictures()" class="px-4 py-1.5 rounded-full bg-white border border-stone-300 text-stone-700 text-sm hover:bg-stone-50 transition shadow-sm flex items-center gap-1">
+            <span>🔄</span> もう一度並べ替える
+          </button>
+        </div>
+      </div>
+
+      <div id="picture-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <!-- Rendered Dynamically -->
+      </div>
+    </section>
+
+    <!-- SOUND MODE -->
+    <section id="view-sound" class="hidden animate-fade-in">
+      <div class="text-center mb-8 max-w-2xl mx-auto">
+        <h2 class="font-mincho text-2xl sm:text-3xl font-bold text-stone-800 mb-3 flex items-center justify-center gap-2">
+          <span>🌿</span> 気になる音靈（五十音）を選んでください
+        </h2>
+        <p class="text-stone-600 text-sm sm:text-base leading-relaxed bg-emerald-50/60 p-4 rounded-xl border border-emerald-100/80">
+          この音は、ひとつの景色やメッセージにつながっています。<br class="hidden sm:inline">
+          音がひらく世界を、ゆっくり感じてみましょう。
+        </p>
+      </div>
+
+      <div id="sound-grid" class="max-w-3xl mx-auto grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3 p-4 glass-card rounded-2xl">
+        <!-- Rendered Dynamically -->
+      </div>
+    </section>
+
+    <!-- RESULT VIEW -->
+    <section id="view-result" class="hidden animate-fade-in max-w-3xl mx-auto">
+      <div class="glass-card rounded-3xl p-6 sm:p-10 border border-stone-200/80 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+        
+        <div class="absolute top-6 left-6 w-14 h-14 rounded-2xl bg-emerald-800 text-white font-mincho text-2xl font-bold flex items-center justify-center shadow-lg">
+          <span id="result-char">あ</span>
+        </div>
+
+        <div id="result-mode-tag" class="text-xs font-semibold text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full mb-6">
+          選ばれた景色と音靈
+        </div>
+
+        <div id="result-svg-container" class="w-full max-w-md h-64 sm:h-80 rounded-2xl overflow-hidden shadow-inner my-2 flex items-center justify-center bg-stone-100 border border-stone-200">
+          <!-- Dynamic Image -->
+        </div>
+
+        <h3 id="result-title" class="font-mincho text-2xl sm:text-3xl font-bold text-stone-800 mt-6 mb-3">
+          タイトル
+        </h3>
+
+        <!-- Description from Excel -->
+        <div class="bg-amber-50/60 p-5 rounded-2xl border border-amber-100/80 my-4 w-full">
+          <p id="result-desc" class="text-stone-700 leading-relaxed sm:text-lg font-mincho">
+            ここにイメージが表示されます。
+          </p>
+        </div>
+
+        <!-- Keywords from Excel -->
+        <div class="mt-2 mb-4">
+          <span class="text-xs text-stone-500 block mb-2 font-bold tracking-widest uppercase">キーワード</span>
+          <div id="result-keywords" class="flex flex-wrap justify-center gap-2">
+            <!-- Dynamic Tags -->
+          </div>
+        </div>
+
+        <div class="my-4 text-stone-600 font-mincho text-sm leading-relaxed">
+          <p class="text-stone-300 text-xs tracking-widest mb-3">──────────</p>
+          <p class="text-stone-700 font-medium">
+            心に浮かんだことを、<br>そのまま大切にしてみてください。
+          </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3 mt-4 pt-6 border-t border-stone-200/60 w-full">
+          <button onclick="playTone(activeCharData?.freq || 440)" class="px-4 py-2.5 rounded-full bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 text-sm font-medium transition flex items-center gap-1.5 shadow-sm">
+            <span>🔊</span> 音を響かせる
+          </button>
+          <button id="btn-retry" onclick="retryCurrentMode()" class="px-5 py-2.5 rounded-full bg-emerald-700 text-white hover:bg-emerald-800 text-sm font-medium transition shadow-md flex items-center gap-1.5">
+            <span>🔄</span> もう一度選ぶ
+          </button>
+          <button onclick="toggleMode()" class="px-5 py-2.5 rounded-full bg-stone-200 text-stone-700 hover:bg-stone-300 text-sm font-medium transition flex items-center gap-1.5">
+            <span>🔀</span> <span id="btn-toggle-label">音から選ぶへ</span>
+          </button>
+          <button onclick="showHome()" class="px-4 py-2.5 rounded-full bg-white border border-stone-300 text-stone-600 hover:bg-stone-50 text-sm font-medium transition">
+            🏠 最初に戻る
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="w-full py-6 text-center text-xs text-stone-500 border-t border-stone-200/40 bg-white/30 backdrop-blur-sm mt-auto">
+    <p>音靈オラクル — 46の音と言の葉のカード</p>
+  </footer>
+
+  <script>
+    let currentMode = 'picture';
+    let activeCharData = null;
+    let currentShuffledData = [];
+    let audioCtx = null;
+
+    function playTone(freq = 440) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.5);
+      } catch (e) {
+        console.log("Audio playback note:", e);
+      }
+    }
+
+    /* 46 Sound Dataset directly extracted from User Excel Sheet */
+    const SOUND_DATA = [
+      { id: 1, char: "あ", title: "始まりと光", desc: "まだ何もない朝の空に、ひとつじの光が差し込んでくる瞬間", keywords: ["始まり", "存在", "光", "空"], color: ["#ff9a9e", "#fecfef"], freq: 261.63 },
+      { id: 2, char: "い", title: "静かなまなざし", desc: "澄んだ水面をじっと見つめるような、静かなまなざし", keywords: ["意識", "観察", "洞察"], color: ["#a1c4fd", "#c2e9fb"], freq: 293.66 },
+      { id: 3, char: "う", title: "命のあたたかさ", desc: "あたたかいお風呂に入り、ふうっと息をはく感じ", keywords: ["産み出す", "命", "水", "流れ"], color: ["#667eea", "#764ba2"], freq: 329.63 },
+      { id: 4, char: "え", title: "広がる輪", desc: "輪になって手をつなぎ、気持ちがふわっと広がっていく場", keywords: ["広がり", "縁", "笑み", "ひらく"], color: ["#84fab0", "#8fd3f4"], freq: 349.23 },
+      { id: 5, char: "お", title: "大地の根っこ", desc: "たたみの上にぺたりと座って、大地にしっかり根をおろした感じ", keywords: ["安定", "信頼", "存在", "根っこ"], color: ["#e6b980", "#eacda3"], freq: 392.00 },
+
+      { id: 6, char: "か", title: "動き出すタイミング", desc: "よっし！と腕まくりをして、いま動き出そうとするタイミング", keywords: ["火", "意志", "始動", "行動"], color: ["#f6d365", "#fda085"], freq: 440.00 },
+      { id: 7, char: "き", title: "咲く直前の歓び", desc: "花のつぼみがふくらんで、ぷちんと音を立てて咲く直前", keywords: ["喜び", "芽生え", "命", "目覚め"], color: ["#fbc2eb", "#a6c1ee"], freq: 493.88 },
+      { id: 8, char: "く", title: "結びと区切り", desc: "ヒモをくるりと結んで「ここまで」と区切りをつける動作", keywords: ["結び", "くくり", "区切り", "仕切り"], color: ["#89f7fe", "#66a6ff"], freq: 523.25 },
+      { id: 9, char: "け", title: "変化の気配", desc: "カーテンがふわりとゆれて、変化の気配を感じるとき", keywords: ["気配", "兆し", "場の空気"], color: ["#d4fc79", "#96e6a1"], freq: 587.33 },
+      { id: 10, char: "こ", title: "確かめるつながり", desc: "そばにいる人の手をぎゅっとにぎって、つながりを確かめる", keywords: ["核", "子", "個", "守る", "奥の声"], color: ["#fdcbf1", "#e6dee9"], freq: 659.25 },
+
+      { id: 11, char: "さ", title: "湖面の静かな気配", desc: "湖の水面にそっと葉っぱを浮かべるような、静かな気配", keywords: ["繊細さ", "整える", "見守り"], color: ["#a8edf0", "#fed6e3"], freq: 698.46 },
+      { id: 12, char: "し", title: "本質を受けとめる光", desc: "空気が澄んだ朝、まっすぐに差し込む光をまなざしで受けとめる", keywords: ["真理の眼", "静けさ", "本質を見抜く"], color: ["#d299c2", "#fef9d7"], freq: 783.99 },
+      { id: 13, char: "す", title: "まっすぐ伸びる小道", desc: "一本の小道がまっすぐ先へとのびていて、迷わず歩いていける道", keywords: ["素直", "透明", "まっすぐ通る"], color: ["#89f7fe", "#66a6ff"], freq: 880.00 },
+      { id: 14, char: "せ", title: "守られている安心", desc: "大きな背中にもたれて、あたたかく守られている感じ", keywords: ["精神性", "背", "支え"], color: ["#abecd6", "#fbed96"], freq: 987.77 },
+      { id: 15, char: "そ", title: "静かに広がる波紋", desc: "小石をぽとんと水に落とすと、波紋が静かに広がっていく瞬間", keywords: ["祈り", "波紋", "響き"], color: ["#a1c4fd", "#c2e9fb"], freq: 1046.50 },
+
+      { id: 16, char: "た", title: "両足で立ち上がる時", desc: "地にしっかり足をつけて、両足で立ち上がったそのとき", keywords: ["自立", "確かさ", "地に足をつける"], color: ["#ff0844", "#ffb199"], freq: 293.66 },
+      { id: 17, char: "ち", title: "幹へ流れる命", desc: "木の根っこから水が吸い上げられ、幹へ命が流れていく感覚", keywords: ["知恵", "命の流れ", "根ざすもの"], color: ["#f7d923", "#f2a65a"], freq: 329.63 },
+      { id: 18, char: "つ", title: "つないでいくひびき", desc: "糸でひとつずつビーズをつないでいく、手仕事のようなひびき", keywords: ["つながり", "連なる", "仲間"], color: ["#e0c3fc", "#8ec5fc"], freq: 349.23 },
+      { id: 19, char: "て", title: "差しのべるやさしさ", desc: "誰かにそっと手を差し伸べる、やさしいアクション", keywords: ["手", "展開", "手放し", "伝える"], color: ["#fbc2eb", "#a6c1ee"], freq: 392.00 },
+      { id: 20, char: "と", title: "ざわめきを落ち着かせる", desc: "静かに座って、心の中のざわめきを落ち着かせていくとき", keywords: ["支える", "定着", "止まる"], color: ["#fa709a", "#fee140"], freq: 440.00 },
+
+      { id: 21, char: "な", title: "内側を見つめる鏡", desc: "鏡をのぞきこむように、そっと自分の内側を見つめているとき", keywords: ["存在を知る", "自己認識", "内省"], color: ["#4facfe", "#00f2fe"], freq: 493.88 },
+      { id: 22, char: "に", title: "縁側のおだやかな語らい", desc: "庭の縁側で誰かと心ゆるすおしゃべりをしているおだやかさ", keywords: ["共鳴", "受容", "つながり"], color: ["#ff9a9e", "#fecfef"], freq: 523.25 },
+      { id: 23, char: "ぬ", title: "まあるい包容力", desc: "赤ちゃんを毛布でふんわり包むような、まあるいやさしさ", keywords: ["包む", "内包", "育む"], color: ["#f6d365", "#fda085"], freq: 587.33 },
+      { id: 24, char: "ね", title: "春を待つ種", desc: "土の中でじっと眠っている種が、春を待っている感じ", keywords: ["根", "祈り", "静寂"], color: ["#d4fc79", "#96e6a1"], freq: 659.25 },
+      { id: 25, char: "の", title: "のびやかな魂", desc: "風に乗って草原を自由にかけめぐる、のびやかな魂", keywords: ["魂の広がり", "自由", "野性"], color: ["#84fab0", "#8fd3f4"], freq: 698.46 },
+
+      { id: 26, char: "は", title: "世界が目覚める瞬間", desc: "夜明けの光がぱっと差しこみ、世界が目覚める瞬間", keywords: ["開く", "変化", "放つ", "調和"], color: ["#ff9a9e", "#fecfef"], freq: 783.99 },
+      { id: 27, char: "ひ", title: "灯るひらめき", desc: "ろうそくの火が静かにゆれて、ひらめきが灯るような時", keywords: ["光", "霊性", "導き", "ひらめき"], color: ["#fbc2eb", "#a6c1ee"], freq: 880.00 },
+      { id: 28, char: "ふ", title: "やわらかな風の訪れ", desc: "そっとほほに風がふれるように、やわらかい感覚が訪れる", keywords: ["風", "触れる", "受信"], color: ["#a1c4fd", "#c2e9fb"], freq: 987.77 },
+      { id: 29, char: "へ", title: "橋を渡って手渡す", desc: "川の上に架かった橋を渡って、向こう側に手渡すイメージ", keywords: ["橋渡し", "移行", "緩和"], color: ["#e6b980", "#eacda3"], freq: 1046.50 },
+      { id: 30, char: "ほ", title: "ほっとする安らぎ", desc: "毛布にくるまれて、深呼吸をするとほっと安心する感じ", keywords: ["保つ", "守る", "安らぎ"], color: ["#f6d365", "#fda085"], freq: 261.63 },
+
+      { id: 31, char: "ま", title: "心が整う中心", desc: "自分の家の中心に静かに座って、心が整っている状態", keywords: ["間", "真", "整う", "調和", "静けさ"], color: ["#fef9d7", "#d299c2"], freq: 293.66 },
+      { id: 32, char: "み", title: "雨上がりの雫", desc: "雨上がりの雫が草葉からこぼれて、きらりと光るとき", keywords: ["美", "受容", "再生", "流れ"], color: ["#89f7fe", "#66a6ff"], freq: 329.63 },
+      { id: 33, char: "む", title: "上へと伸びる芽", desc: "土の中で芽がじわじわと伸びて、上へと向かう瞬間", keywords: ["向く", "内向き", "芽", "方向性"], color: ["#e0c3fc", "#8ec5fc"], freq: 349.23 },
+      { id: 34, char: "め", title: "新しい気づきの訪れ", desc: "夜明け前に目を開けるような、新しい気づきの訪れ", keywords: ["目覚め", "兆し", "生まれる", "新しさ"], color: ["#84fab0", "#8fd3f4"], freq: 392.00 },
+      { id: 35, char: "も", title: "愛に包まれる布団", desc: "やわらかい布団にくるまれて、愛に包まれている感じ", keywords: ["母", "愛", "安心", "柔らかさ", "持続"], color: ["#f6d365", "#fda085"], freq: 440.00 },
+
+      { id: 36, char: "や", title: "こだまする癒し", desc: "心地よい音が山々にこだまし、癒しが広がっていくとき", keywords: ["癒し", "やすらぎ", "意志", "集中"], color: ["#a1c4fd", "#c2e9fb"], freq: 493.88 },
+      { id: 37, char: "ゆ", title: "夢の中の感覚", desc: "夢の中をふんわり歩いているような、つながりの感覚", keywords: ["結び", "夢", "ぬくもり", "つながり"], color: ["#fdcbf1", "#e6dee9"], freq: 523.25 },
+      { id: 38, char: "よ", title: "胸いっぱいのよろこび", desc: "よろこびが胸いっぱいにあふれて、それが誰かに届いていく瞬間", keywords: ["喜び", "祝福", "巡り", "循環"], color: ["#667eea", "#764ba2"], freq: 587.33 },
+
+      { id: 39, char: "ら", title: "羅針盤の指す方向", desc: "風が羅針盤を動かすように、方向性を示されるとき", keywords: ["羅針盤", "方向", "織りなす", "調和"], color: ["#ff0844", "#ffb199"], freq: 659.25 },
+      { id: 40, char: "り", title: "小川のリズム", desc: "小川がリズムよく流れて、すべてが整っている様子", keywords: ["理", "律動", "整う", "流れの法則"], color: ["#89f7fe", "#66a6ff"], freq: 698.46 },
+      { id: 41, char: "る", title: "泉に広がる波紋", desc: "深い泉に一滴の水が静かに落ちて、波紋が広がとき", keywords: ["留める", "深める", "静かに浸透"], color: ["#e0c3fc", "#8ec5fc"], freq: 783.99 },
+      { id: 42, char: "れ", title: "雨粒の浄化感", desc: "雨粒が空から降りて、地面へとすーっと溶け込むような浄化感", keywords: ["浄化", "連なり", "つながり", "雫"], color: ["#d4fc79", "#96e6a1"], freq: 880.00 },
+      { id: 43, char: "ろ", title: "道の先のやらかな光", desc: "遠くへ続く道の先に、やらかな光が見えているイメージ", keywords: ["路", "道筋", "進む方向"], color: ["#f6d365", "#fda085"], freq: 987.77 },
+
+      { id: 44, char: "わ", title: "調和する輪", desc: "輪になって手をつなぎ、安心の中で調和している感じ", keywords: ["和", "調和", "繋がり"], color: ["#abecd6", "#fbed96"], freq: 523.25 },
+      { id: 45, char: "を", title: "次の流れへの導き", desc: "静かに何かが始まり、次の流れへと導かれていくとき", keywords: ["導き", "循環", "力の起点"], color: ["#fbc2eb", "#a6c1ee"], freq: 587.33 },
+      { id: 46, char: "ん", title: "余韻の中の満ち足り", desc: "すべてが一つにとけあい、余いんの中に静かに満ちている感覚", keywords: ["統合", "終わり", "無", "全体性"], color: ["#29323c", "#485563"], freq: 220.00 }
+    ];
+
+    function renderCardImage(item) {
+      const imgPath = `images/${item.id}.png`;
+      const fallbackSvg = generateScenerySVG(item);
+      
+      return `
+        <div class="w-full h-full relative overflow-hidden bg-stone-100 flex items-center justify-center">
+          <img src="${imgPath}" alt="${item.title}" class="w-full h-full object-cover transition duration-500 hover:scale-105" 
+            onerror="handleImageError(this, ${item.id})" />
+          <div style="display:none;" class="w-full h-full">
+            ${fallbackSvg}
+          </div>
+        </div>
+      `;
+    }
+
+    function handleImageError(img, id) {
+      if (!img.dataset.step) {
+        img.dataset.step = "1";
+        img.src = `images/${id}.jpg`;
+      } else if (img.dataset.step === "1") {
+        img.dataset.step = "2";
+        img.src = `images/${id}.jpeg`;
+      } else {
+        img.style.display = 'none';
+        if (img.nextElementSibling) {
+          img.nextElementSibling.style.display = 'block';
+        }
+      }
+    }
+
+    function generateScenerySVG(item) {
+      const c1 = item.color[0];
+      const c2 = item.color[1];
+      const seed = item.char.charCodeAt(0);
+      
+      return `
+        <svg viewBox="0 0 300 200" class="w-full h-full object-cover transition duration-500 hover:scale-105" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad-${item.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${c1}" />
+              <stop offset="100%" stop-color="${c2}" />
+            </linearGradient>
+            <linearGradient id="sun-grad-${item.id}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+              <stop offset="100%" stop-color="#fff8e7" stop-opacity="0.4" />
+            </linearGradient>
+          </defs>
+          
+          <rect width="300" height="200" fill="url(#grad-${item.id})" />
+          <circle cx="${(seed * 7) % 180 + 60}" cy="${(seed * 3) % 70 + 50}" r="${(seed % 20) + 35}" fill="url(#sun-grad-${item.id})" />
+          <path d="M0,${130 + (seed % 20)} Q${75 + (seed % 30)},${100 + (seed % 30)} 150,${140 + (seed % 20)} T300,${130 + (seed % 20)} L300,200 L0,200 Z" fill="#ffffff" fill-opacity="0.2" />
+          <path d="M0,${150 + (seed % 15)} Q${100 + (seed % 40)},${120 + (seed % 20)} 200,${160} T300,${150} L300,200 L0,200 Z" fill="#ffffff" fill-opacity="0.3" />
+
+          <circle cx="${(seed * 11) % 260 + 20}" cy="${(seed * 5) % 120 + 20}" r="3" fill="#ffffff" opacity="0.8" />
+          <circle cx="${(seed * 13) % 260 + 20}" cy="${(seed * 7) % 120 + 20}" r="2" fill="#ffffff" opacity="0.6" />
+          <circle cx="${(seed * 17) % 260 + 20}" cy="${(seed * 9) % 120 + 20}" r="4" fill="#ffffff" opacity="0.5" />
+          
+          <text x="150" y="115" font-family="'Shippori Mincho', serif" font-size="32" fill="#ffffff" fill-opacity="0.35" text-anchor="middle" dominant-baseline="middle" font-weight="bold">${item.char}</text>
+        </svg>
+      `;
+    }
+
+    function showHome() {
+      document.getElementById('view-home').classList.remove('hidden');
+      document.getElementById('view-picture').classList.add('hidden');
+      document.getElementById('view-sound').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+      updateNavBtn('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startMode(mode) {
+      currentMode = mode;
+      document.getElementById('view-home').classList.add('hidden');
+      document.getElementById('view-result').classList.add('hidden');
+
+      if (mode === 'picture') {
+        document.getElementById('view-picture').classList.remove('hidden');
+        document.getElementById('view-sound').classList.add('hidden');
+        shuffleAndRenderPictures();
+      } else {
+        document.getElementById('view-sound').classList.remove('hidden');
+        document.getElementById('view-picture').classList.add('hidden');
+        renderSoundGrid();
+      }
+      updateNavBtn(mode);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMode() {
+      if (currentMode === 'picture') {
+        startMode('sound');
+      } else {
+        startMode('picture');
+      }
+    }
+
+    function updateNavBtn(mode) {
+      const btnText = document.getElementById('nav-toggle-text');
+      const btnIcon = document.getElementById('nav-toggle-icon');
+      
+      if (mode === 'picture') {
+        btnText.textContent = '音から選ぶへ';
+        btnIcon.textContent = '🎵';
+      } else {
+        btnText.textContent = '絵から選ぶへ';
+        btnIcon.textContent = '🖼️';
+      }
+    }
+
+    function retryCurrentMode() {
+      startMode(currentMode);
+    }
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function shuffleAndRenderPictures() {
+      currentShuffledData = shuffleArray(SOUND_DATA);
+      const grid = document.getElementById('picture-grid');
+      grid.innerHTML = '';
+
+      currentShuffledData.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'glass-card rounded-2xl overflow-hidden cursor-pointer card-hover flex flex-col border border-stone-200/60 aspect-[4/5] relative group';
+        card.onclick = () => selectCard(item);
+
+        card.innerHTML = `
+          <div class="w-full h-full relative overflow-hidden bg-stone-100">
+            ${renderCardImage(item)}
+            <div class="absolute inset-0 bg-stone-900/20 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center">
+              <span class="bg-white/90 text-stone-800 text-xs font-bold px-3 py-1 rounded-full shadow">この景色を眺める</span>
+            </div>
+          </div>
+          <div class="p-2.5 text-center bg-white/80 border-t border-stone-100">
+            <span class="text-xs text-stone-500 font-medium">景色 #${index + 1}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderSoundGrid() {
+      const grid = document.getElementById('sound-grid');
+      grid.innerHTML = '';
+
+      SOUND_DATA.forEach((item) => {
+        const btn = document.createElement('button');
+        btn.className = 'aspect-square rounded-xl bg-white border border-stone-200 text-stone-800 font-mincho text-xl font-bold hover:bg-emerald-700 hover:text-white transition duration-200 shadow-sm flex items-center justify-center group active:scale-95';
+        btn.onclick = () => selectCard(item);
+        
+        btn.innerHTML = `
+          <span class="group-hover:scale-110 transition">${item.char}</span>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectCard(item) {
+      activeCharData = item;
+      playTone(item.freq);
+
+      document.getElementById('view-picture').classList.add('hidden');
+      document.getElementById('view-sound').classList.add('hidden');
+      document.getElementById('view-home').classList.add('hidden');
+
+      const resultView = document.getElementById('view-result');
+      resultView.classList.remove('hidden');
+
+      document.getElementById('result-char').textContent = item.char;
+      document.getElementById('result-title').textContent = item.title;
+      document.getElementById('result-desc').textContent = item.desc;
+      document.getElementById('result-svg-container').innerHTML = renderCardImage(item);
+
+      const modeTag = document.getElementById('result-mode-tag');
+      const toggleBtnLabel = document.getElementById('btn-toggle-label');
+      
+      if (currentMode === 'picture') {
+        modeTag.textContent = '🖼️ 選んだ景色が伝えるメッセージ';
+        toggleBtnLabel.textContent = '音から選ぶへ';
+      } else {
+        modeTag.textContent = '🎵 音からひらかれた景色';
+        toggleBtnLabel.textContent = '絵から選ぶへ';
+      }
+
+      const kwContainer = document.getElementById('result-keywords');
+      kwContainer.innerHTML = '';
+      item.keywords.forEach(kw => {
+        const tag = document.createElement('span');
+        tag.className = 'px-3 py-1 bg-stone-100 text-stone-700 rounded-full text-xs font-semibold border border-stone-200';
+        tag.textContent = `# ${kw}`;
+        kwContainer.appendChild(tag);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.onload = function() {
+      showHome();
+    };
+  </script>
+</body>
+</html>
